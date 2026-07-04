@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#c0392b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="description" content="FireProm PRO — единая система расчёта металла, дверей, монтажа, CRM и КП для ООО «ФАЙЕРПРОМ»">
+<title>FireProm PRO v7.0 — ООО «ФАЙЕРПРОМ»</title>
+<style>
+:root{--primary:#c0392b;--primary-dark:#a93226;--secondary:#2c3e50;--success:#27ae60;--warning:#f39c12;--danger:#e74c3c;--info:#3498db;--purple:#8e44ad;--blue:#2874a6;--green:#1e8449;--orange:#d35400;--bg:#f5f6fa;--card-bg:#ffffff;--text:#2c3e50;--text-muted:#7f8c8d;--border:#e0e0e0;--shadow:0 2px 8px rgba(0,0,0,0.08);--shadow-hover:0 4px 16px rgba(0,0,0,0.12);--radius:12px;--radius-sm:8px;--transition:0.2s ease;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;--touch-min:44px}
+body.dark{--bg:#1a1a2e;--card-bg:#16213e;--text:#e0e0e0;--text-muted:#a0a0a0;--border:#2a2a4a;--shadow:0 2px 8px rgba(0,0,0,0.3)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+#splash{position:fixed;inset:0;background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10000;transition:opacity .6s,visibility .6s}
+#splash.hidden{opacity:0;visibility:hidden}
+.splash-logo{font-size:80px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.splash-title{font-size:28px;font-weight:800;color:#fff;margin-top:20px;letter-spacing:2px}
+.splash-subtitle{font-size:14px;color:rgba(255,255,255,.8);margin-top:8px}
+.splash-version{font-size:12px;color:rgba(255,255,255,.6);margin-top:4px;background:rgba(255,255,255,.15);padding:4px 16px;border-radius:20px}
+.splash-loader{margin-top:32px;width:200px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;overflow:hidden}
+.splash-loader-bar{height:100%;width:0%;background:#fff;animation:loadBar 1.8s ease-in-out infinite}
+@keyframes loadBar{0%{width:0%;margin-left:0}50%{width:70%;margin-left:15%}100%{width:0%;margin-left:100%}}
+.app-header{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);color:#fff;padding:.75rem 1rem;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(192,57,43,.3)}
+.app-header__top{display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap}
+.app-header__logo{display:flex;align-items:center;gap:.5rem;font-size:1.15rem;font-weight:700}
+.app-header__logo-icon{font-size:1.5rem}
+.app-header__version{font-size:.65rem;opacity:.8;font-weight:400;background:rgba(255,255,255,.15);padding:.15rem .5rem;border-radius:20px}
+.app-header__subtitle{font-size:.75rem;opacity:.85;margin-top:.15rem}
+.app-header__actions{display:flex;gap:.4rem;flex-wrap:wrap}
+#offline-bar{position:fixed;top:0;left:0;right:0;background:var(--warning);color:#000;padding:6px;text-align:center;z-index:1001;font-size:.8rem;font-weight:600;display:none;animation:slideDown .3s}
+@keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+#install-prompt{position:fixed;bottom:80px;left:16px;right:16px;background:var(--card-bg);border-radius:var(--radius);padding:16px;display:none;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,.3);z-index:200;border:1px solid var(--border)}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--card-bg);display:flex;justify-content:space-around;padding:.4rem 0 .6rem;box-shadow:0 -2px 12px rgba(0,0,0,.1);z-index:100;border-top:1px solid var(--border)}
+.bottom-nav__item{display:flex;flex-direction:column;align-items:center;gap:.15rem;padding:.3rem .5rem;border:none;background:none;color:var(--text-muted);font-size:.6rem;cursor:pointer;transition:var(--transition);border-radius:var(--radius-sm);min-width:52px;-webkit-tap-highlight-color:transparent}
+.bottom-nav__item .nav-icon{font-size:1.3rem;line-height:1}
+.bottom-nav__item.active{color:var(--primary);background:rgba(192,57,43,.08)}
+.bottom-nav__item:active{transform:scale(.95)}
+.main-content{padding:1rem 1rem 5.5rem 1rem;max-width:800px;margin:0 auto}
+.section{display:none;animation:fadeIn .3s ease}
+.section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.section-title{font-size:1.1rem;font-weight:700;color:var(--secondary);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+.section-title .icon{font-size:1.3rem}
+.card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:1.25rem;margin-bottom:1rem;transition:var(--transition)}
+.card:hover{box-shadow:var(--shadow-hover)}
+.card__header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid var(--border)}
+.card__title{font-size:.95rem;font-weight:600;color:var(--secondary)}
+.card__badge{font-size:.7rem;padding:.2rem .6rem;border-radius:20px;background:var(--primary);color:#fff;font-weight:600}
+.price-block{background:linear-gradient(135deg,#fef9e7,#fdebd0);border:2px solid var(--warning);border-radius:var(--radius);padding:1rem;margin-bottom:1rem}
+body.dark .price-block{background:linear-gradient(135deg,#3d2a0a,#2c1e08)}
+.price-block h3{color:var(--orange);margin-bottom:.75rem;font-size:.95rem}
+.price-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem}
+.price-input-group{display:flex;flex-direction:column;gap:.25rem}
+.price-input-group label{font-weight:600;font-size:.75rem;color:#555}
+body.dark .price-input-group label{color:#aaa}
+.price-input-group input,.price-input-group select{font-weight:700;font-size:.9rem;text-align:right;padding:.5rem;min-height:38px}
+.price-hint{font-size:.7rem;color:#888}
+.form-group{margin-bottom:1rem}
+.form-label{display:block;font-size:.85rem;font-weight:500;color:var(--text-muted);margin-bottom:.4rem}
+.form-input,.form-select,.form-textarea{width:100%;padding:.75rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:1rem;font-family:var(--font);color:var(--text);background:var(--card-bg);transition:var(--transition);-webkit-appearance:none;appearance:none;min-height:var(--touch-min)}
+.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(192,57,43,.1)}
+.form-input::placeholder{color:#bdc3c7}
+.form-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237f8c8d' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;padding-right:2.5rem}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.form-row-3{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem}
+.form-row-4{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem}
+.checkbox-label{display:flex;align-items:center;gap:.5rem;cursor:pointer;font-size:.9rem;padding:.5rem 0}
+.checkbox-label input[type=checkbox]{width:20px;height:20px;accent-color:var(--primary);flex-shrink:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.85rem 1.25rem;border:none;border-radius:var(--radius-sm);font-size:.9rem;font-weight:600;font-family:var(--font);cursor:pointer;transition:var(--transition);min-height:var(--touch-min);-webkit-tap-highlight-color:transparent;color:#fff}
+.btn:active{transform:scale(.97)}
+.btn--primary{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);box-shadow:0 2px 8px rgba(192,57,43,.3)}
+.btn--primary:hover{box-shadow:0 4px 12px rgba(192,57,43,.4)}
+.btn--secondary{background:var(--secondary)}
+.btn--secondary:hover{background:#34495e}
+.btn--success{background:var(--success)}
+.btn--success:hover{background:#229954}
+.btn--danger{background:var(--danger)}
+.btn--danger:hover{background:#c0392b}
+.btn--purple{background:var(--purple)}
+.btn--purple:hover{background:#732d91}
+.btn--blue{background:var(--blue)}
+.btn--blue:hover{background:#1f618d}
+.btn--orange{background:var(--orange)}
+.btn--orange:hover{background:#a04000}
+.btn--outline{background:transparent;border:1.5px solid var(--primary);color:var(--primary)}
+.btn--outline:hover{background:rgba(192,57,43,.05)}
+.btn--ghost{background:transparent;color:var(--text-muted);border:1px solid var(--border)}
+.btn--ghost:hover{background:var(--bg)}
+.btn-sm{padding:.5rem .75rem;font-size:.8rem;min-height:36px}
+.btn-group{display:flex;gap:.5rem;flex-wrap:wrap}
+.btn-group .btn{flex:1;min-width:100px}
+.result-block{background:linear-gradient(135deg,#f8f9fa 0%,#eef2f7 100%);border-radius:var(--radius);padding:1.25rem;margin-top:1rem;border-left:4px solid var(--primary)}
+body.dark .result-block{background:linear-gradient(135deg,#1a1a3a 0%,#162040 100%)}
+.result-block__title{font-size:.8rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.75rem}
+.result-row{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px dashed var(--border);font-size:.9rem}
+.result-row:last-child{border-bottom:none}
+.result-row--total{font-size:1.15rem;font-weight:700;color:var(--primary);padding-top:.75rem;margin-top:.5rem;border-top:2px solid var(--primary);border-bottom:none}
+.result-row__value{font-family:'Courier New',monospace;font-weight:600;color:var(--secondary)}
+.result-row--total .result-row__value{font-size:1.3rem;color:var(--primary)}
+.alert{padding:.75rem 1rem;border-radius:var(--radius-sm);margin:.75rem 0;font-size:.85rem;border-left:4px solid}
+.alert--success{background:#e8f8f5;border-color:var(--success);color:var(--success)}
+.alert--error{background:#fdedec;border-color:var(--danger);color:var(--danger)}
+.alert--info{background:#eaf2f8;border-color:var(--info);color:var(--info)}
+.alert--warning{background:#fef9e7;border-color:var(--warning);color:var(--orange)}
+body.dark .alert--success{background:#1a3a2a}
+body.dark .alert--error{background:#3a1a1a}
+body.dark .alert--info{background:#1a2a3a}
+body.dark .alert--warning{background:#3a2a0a}
+.table-container{overflow-x:auto;margin:.75rem 0;border-radius:var(--radius-sm);border:1px solid var(--border)}
+.data-table{width:100%;border-collapse:collapse;font-size:.8rem}
+.data-table th,.data-table td{padding:.6rem .5rem;text-align:left;border-bottom:1px solid var(--border)}
+.data-table th{background:#f8f9fa;font-weight:600;color:var(--text-muted);font-size:.7rem;text-transform:uppercase;letter-spacing:.3px;position:sticky;top:0}
+body.dark .data-table th{background:#1a1a3a}
+.data-table td:last-child,.data-table th:last-child{text-align:right}
+.data-table tr:hover{background:var(--bg)}
+.data-table input{min-height:32px;padding:.3rem .5rem;font-size:.8rem}
+.cart{background:#f9ebea;border:2px solid var(--primary);padding:1rem;border-radius:var(--radius);margin-top:1rem}
+body.dark .cart{background:#3d1a1a}
+.cart-table{width:100%;border-collapse:collapse;font-size:.8rem}
+.cart-table th,.cart-table td{padding:.5rem;border:1px solid var(--border);text-align:left}
+.cart-table th{background:var(--primary);color:#fff}
+.cart-total{font-size:1.3rem;font-weight:700;text-align:right;margin-top:1rem;color:var(--primary)}
+.dxf-upload{background:var(--card-bg);border:2px dashed var(--purple);padding:2rem 1rem;border-radius:var(--radius);text-align:center;margin:.75rem 0;transition:.2s;cursor:pointer}
+.dxf-upload.dragover{background:#f4ecf7;border-color:#6c3483;transform:scale(1.01)}
+.dxf-upload input[type=file]{display:none}
+.dxf-canvas-wrap{margin-top:.75rem;background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.5rem;text-align:center;overflow-x:auto}
+#dxfCanvas{max-width:100%;border:1px solid var(--border);background:#fafafa}
+.dxf-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-top:.75rem}
+.dxf-stat{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.5rem;text-align:center}
+.dxf-stat .val{font-size:1rem;font-weight:700;color:var(--primary);font-family:Consolas,monospace}
+.dxf-stat .lbl{font-size:.65rem;color:var(--text-muted)}
+.segment-badge{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1rem;border-radius:20px;font-size:.9rem;font-weight:600;margin-top:.5rem}
+.segment-badge--vip{background:#fdebd0;color:#d68910}
+.segment-badge--active{background:#d5f5e3;color:var(--success)}
+.segment-badge--sleeping{background:#fef9e7;color:var(--warning)}
+.segment-badge--lost{background:#fadbd8;color:var(--danger)}
+.kp-preview{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;font-size:.9rem;line-height:1.6;color:#000}
+.kp-preview__header{text-align:center;border-bottom:2px solid var(--primary);padding-bottom:1rem;margin-bottom:1.5rem}
+.kp-preview__header h2{color:var(--primary);font-size:1.3rem;margin-bottom:.3rem}
+.kp-preview__header p{font-size:.8rem;color:#666}
+.kp-preview__table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.85rem}
+.kp-preview__table th,.kp-preview__table td{border:1px solid #ccc;padding:.5rem;text-align:left}
+.kp-preview__table th{background:#f0f0f0;font-weight:600}
+.kp-preview__table td:last-child,.kp-preview__table th:last-child{text-align:right}
+.kp-preview__total{background:var(--primary);color:#fff;font-weight:700}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--secondary);color:#fff;padding:.75rem 1.5rem;border-radius:var(--radius-sm);font-size:.85rem;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,.2);z-index:200;opacity:0;transition:all .3s ease;pointer-events:none;white-space:nowrap;max-width:90%;text-align:center}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.toast--success{background:var(--success)}
+.toast--error{background:var(--danger)}
+.toast--info{background:var(--info)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:none;opacity:0;transition:opacity .3s}
+.modal-overlay.show{display:block;opacity:1}
+.modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.9);background:var(--card-bg);border-radius:var(--radius);padding:1.5rem;max-width:90%;width:500px;max-height:80vh;overflow-y:auto;z-index:301;display:none;opacity:0;transition:all .3s;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.modal.show{display:block;opacity:1;transform:translate(-50%,-50%) scale(1)}
+.modal__header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid var(--border)}
+.modal__title{font-size:1.1rem;font-weight:700}
+.modal__close{background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--text-muted)}
+.inner-tabs{display:flex;gap:0;margin-bottom:1rem;border-bottom:2px solid var(--border);flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.inner-tab{padding:.6rem 1rem;cursor:pointer;background:none;border:none;border-radius:var(--radius-sm) var(--radius-sm) 0 0;font-weight:600;font-size:.8rem;color:var(--text-muted);white-space:nowrap;transition:var(--transition)}
+.inner-tab.active{color:var(--primary);border-bottom:3px solid var(--primary);background:rgba(192,57,43,.05)}
+.inner-tab:hover:not(.active){background:var(--bg)}
+.block{display:none;animation:fadeIn .25s ease}
+.block.active{display:block}
+@media print{.app-header,.bottom-nav,.btn-group,.toast,.no-print,#splash,#offline-bar,#install-prompt{display:none!important}.main-content{padding:0;max-width:100%}.section{display:block!important}.kp-preview{border:none;box-shadow:none}body{background:#fff;color:#000}.card{box-shadow:none;border:1px solid #ddd;break-inside:avoid}}
+@media(max-width:768px){.main-content{padding:.75rem .75rem 5.5rem .75rem}.form-row,.form-row-3,.form-row-4,.price-grid{grid-template-columns:1fr!important}.app-header__logo{font-size:1rem}.btn-group .btn{width:100%}.dxf-stats{grid-template-columns:repeat(2,1fr)}.data-table{font-size:.7rem}.data-table th,.data-table td{padding:.4rem .3rem}}
+@media(max-width:360px){.card{padding:.75rem}.bottom-nav__item{min-width:44px;padding:.2rem .3rem;font-size:.55rem}}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#bdc3c7;border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:#95a5a6}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-logo">🔥</div>
+  <div class="splash-title">FireProm PRO</div>
+  <div class="splash-subtitle">ООО «ФАЙЕРПРОМ»</div>
+  <div class="splash-version">v7.0 Unified</div>
+  <div class="splash-loader"><div class="splash-loader-bar"></div></div>
+</div>
+
+<div id="offline-bar">⚠️ Офлайн-режим — данные сохраняются локально</div>
+
+<div id="install-prompt">
+  <div style="font-size:24px">📲</div>
+  <div style="flex:1">
+    <div style="font-weight:700;font-size:.95rem">Установить приложение</div>
+    <div style="font-size:.8rem;color:var(--text-muted)">Быстрый доступ с главного экрана</div>
+  </div>
+  <button class="btn btn--primary btn-sm" onclick="app.install()">Установить</button>
+  <button onclick="app.dismissInstall()" style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--text-muted)">✕</button>
+</div>
+
+<header class="app-header">
+  <div class="app-header__top">
+    <div class="app-header__logo">
+      <span class="app-header__logo-icon">🔥</span>
+      <div>
+        <div>FireProm PRO <span class="app-header__version">v7.0</span></div>
+        <div class="app-header__subtitle">ООО «ФАЙЕРПРОМ» · ИНН 7814643719</div>
+      </div>
+    </div>
+    <div class="app-header__actions">
+      <button class="btn btn-sm btn--ghost" onclick="app.toggleTheme()" title="Сменить тему">🌓</button>
+      <button class="btn btn-sm btn--ghost" onclick="app.exportAll()" title="Экспорт">💾</button>
+      <button class="btn btn-sm btn--ghost" onclick="window.print()" title="Печать">🖨️</button>
+    </div>
+  </div>
+</header>
+
+<main class="main-content">
+
+<!-- ===== DASHBOARD ===== -->
+<section id="sec-dashboard" class="section active">
+  <h2 class="section-title"><span class="icon">📊</span> Главная</h2>
+  <div class="card">
+    <div class="card__header"><span class="card__title">Быстрый доступ</span></div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem">
+      <div class="card" style="cursor:pointer" onclick="app.showSection('sec-metal')"><div style="font-size:2rem;text-align:center">🔩</div><div style="text-align:center;font-weight:600;font-size:.85rem;margin-top:.5rem">Калькулятор металла</div><div style="text-align:center;font-size:.7rem;color:var(--text-muted)">Раскрой + DXF</div></div>
+      <div class="card" style="cursor:pointer" onclick="app.showSection('sec-doors')"><div style="font-size:2rem;text-align:center">🚪</div><div style="text-align:center;font-weight:600;font-size:.85rem;margin-top:.5rem">Калькулятор дверей</div><div style="text-align:center;font-size:.7rem;color:var(--text-muted)">Противопожарные</div></div>
+      <div class="card" style="cursor:pointer" onclick="app.showSection('sec-kp')"><div style="font-size:2rem;text-align:center">📄</div><div style="text-align:center;font-weight:600;font-size:.85rem;margin-top:.5rem">Генератор КП</div><div style="text-align:center;font-size:.7rem;color:var(--text-muted)">Коммерческое предложение</div></div>
+      <div class="card" style="cursor:pointer" onclick="app.showSection('sec-install')"><div style="font-size:2rem;text-align:center">🛠️</div><div style="text-align:center;font-weight:600;font-size:.85rem;margin-top:.5rem">Прайс монтажа</div><div style="text-align:center;font-size:.7rem;color:var(--text-muted)">61 позиция</div></div>
+      <div class="card" style="cursor:pointer" onclick="app.showSection('sec-rfm')"><div style="font-size:2rem;text-align:center">📈</div><div style="text-align:center;font-weight:600;font-size:.85rem;margin-top:.5rem">RFM-анализ</div><div style="text-align:center;font-size:.7rem;color:var(--text-muted)">Сегментация</div></div>
+      <div class="card" style="cursor:pointer" onclick="app.showSection('sec-crm')"><div style="font-size:2rem;text-align:center">🏢</div><div style="text-align:center;font-weight:600;font-size:.85rem;margin-top:.5rem">CRM</div><div style="text-align:center;font-size:.7rem;color:var(--text-muted)">Клиенты и заявки</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card__header"><span class="card__title">📈 Статистика</span><span class="card__badge" id="dash-date">—</span></div>
+    <div class="form-row-4">
+      <div style="text-align:center;padding:.75rem"><div style="font-size:.75rem;color:var(--text-muted)">Всего расчётов</div><div style="font-size:1.8rem;font-weight:700;color:var(--primary)" id="stat-calcs">0</div></div>
+      <div style="text-align:center;padding:.75rem"><div style="font-size:.75rem;color:var(--text-muted)">Сумма КП</div><div style="font-size:1.8rem;font-weight:700;color:var(--success)" id="stat-kp">0 ₽</div></div>
+      <div style="text-align:center;padding:.75rem"><div style="font-size:.75rem;color:var(--text-muted)">Клиентов</div><div style="font-size:1.8rem;font-weight:700;color:var(--warning)" id="stat-clients">0</div></div>
+      <div style="text-align:center;padding:.75rem"><div style="font-size:.75rem;color:var(--text-muted)">В корзине</div><div style="font-size:1.8rem;font-weight:700;color:var(--purple)" id="stat-cart">0</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== METAL CALCULATOR ===== -->
+<section id="sec-metal" class="section">
+  <h2 class="section-title"><span class="icon">🔩</span> Калькулятор металла</h2>
+  <div class="price-block">
+    <h3>💰 Цены на металл (с НДС 22%)</h3>
+    <div class="price-grid">
+      <div class="price-input-group"><label>🟦 ОЦ, ₽/т</label><input type="number" id="price-oc" value="85330" step="10" onchange="app.savePrices()"><div class="price-hint" id="hint-oc">≈ 85.33 ₽/кг</div></div>
+      <div class="price-input-group"><label>⬜ Х/К, ₽/т</label><input type="number" id="price-hk" value="77210" step="10" onchange="app.savePrices()"><div class="price-hint" id="hint-hk">≈ 77.21 ₽/кг</div></div>
+      <div class="price-input-group"><label>🟫 Г/К, ₽/т</label><input type="number" id="price-gk" value="66760" step="10" onchange="app.savePrices()"><div class="price-hint" id="hint-gk">≈ 66.76 ₽/кг</div></div>
+      <div class="price-input-group"><label>📊 НДС, %</label><select id="vat-rate" onchange="app.savePrices()"><option value="22" selected>22%</option><option value="20">20%</option><option value="0">Без НДС</option></select><div class="price-hint">включён в цену</div></div>
+    </div>
+    <div style="display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap">
+      <button class="btn btn-sm btn--blue" onclick="app.resetPrices()">🔄 Сбросить</button>
+      <button class="btn btn-sm btn--success" onclick="app.savePrices()">💾 Сохранить</button>
+    </div>
+  </div>
+  <div class="inner-tabs">
+    <button class="inner-tab active" onclick="app.showMetalTab('oc')">🟦 ОЦ</button>
+    <button class="inner-tab" onclick="app.showMetalTab('hk')">⬜ Х/К</button>
+    <button class="inner-tab" onclick="app.showMetalTab('gk')">🟫 Г/К</button>
+    <button class="inner-tab" onclick="app.showMetalTab('dxf')">📐 DXF</button>
+    <button class="inner-tab" onclick="app.showMetalTab('cart')">🛒 Корзина (<span id="cart-count">0</span>)</button>
+  </div>
+  <div id="metal-oc" class="block active">
+    <div class="card">
+      <div class="card__header"><span class="card__title">🟦 Оцинкованная сталь (ОЦ)</span></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Толщина, мм</label><select id="oc-thickness" class="form-select" onchange="app.calcMetal('oc')"><option value="0.5">0.5 мм</option><option value="0.7">0.7 мм</option><option value="1.0">1.0 мм</option><option value="1.2">1.2 мм</option><option value="1.5" selected>1.5 мм</option><option value="2.0">2.0 мм</option><option value="2.5">2.5 мм</option><option value="3.0">3.0 мм</option></select></div><div class="form-group"><label class="form-label">Размер листа</label><select id="oc-size" class="form-select" onchange="app.calcMetal('oc')"><option value="1000x2000">1000×2000 мм</option><option value="1250x2500" selected>1250×2500 мм</option><option value="1500x3000">1500×3000 мм</option></select></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Длина детали, мм</label><input type="number" id="oc-part-length" class="form-input" value="500" min="1" onchange="app.calcMetal('oc')"></div><div class="form-group"><label class="form-label">Ширина детали, мм</label><input type="number" id="oc-part-width" class="form-input" value="500" min="1" onchange="app.calcMetal('oc')"></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Кол-во деталей</label><input type="number" id="oc-qty" class="form-input" value="1" min="1" onchange="app.calcMetal('oc')"></div><div class="form-group"><label class="form-label">К-т запаса (K_waste)</label><select id="oc-kwaste" class="form-select" onchange="app.calcMetal('oc')"><option value="1.00">1.00 (простые)</option><option value="1.10">1.10</option><option value="1.15" selected>1.15 (средние)</option><option value="1.20">1.20</option><option value="1.30">1.30 (сложные)</option><option value="1.50">1.50 (очень сложные)</option></select></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Периметр (длина реза), мм</label><input type="number" id="oc-perimeter" class="form-input" value="2000" min="0" onchange="app.calcMetal('oc')"></div><div class="form-group"><label class="form-label">Цена резки, ₽/мм</label><input type="number" id="oc-cut-price" class="form-input" value="0.5" step="0.01" min="0" onchange="app.calcMetal('oc')"></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Доставка, ₽/рейс</label><input type="number" id="oc-delivery" class="form-input" value="5000" min="0" onchange="app.calcMetal('oc')"></div><div class="form-group"><label class="form-label">Накладные (Fixed), ₽</label><input type="number" id="oc-fixed" class="form-input" value="50" min="0" onchange="app.calcMetal('oc')"></div></div>
+      <button class="btn btn--primary" onclick="app.calcMetal('oc')" style="margin-top:.5rem">🧮 Рассчитать</button>
+      <div id="oc-results"></div>
+      <div style="text-align:right;margin-top:.75rem"><button class="btn btn--success" onclick="app.addToCart('oc')">➕ В корзину</button></div>
+    </div>
+  </div>
+  <div id="metal-hk" class="block" style="display:none">
+    <div class="card">
+      <div class="card__header"><span class="card__title">⬜ Холоднокатаная сталь (Х/К)</span></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Толщина, мм</label><select id="hk-thickness" class="form-select" onchange="app.calcMetal('hk')"><option value="0.5">0.5 мм</option><option value="0.7">0.7 мм</option><option value="0.8">0.8 мм</option><option value="1.0">1.0 мм</option><option value="1.2">1.2 мм</option><option value="1.4" selected>1.4 мм</option><option value="1.5">1.5 мм</option><option value="2.0">2.0 мм</option><option value="2.5">2.5 мм</option><option value="3.0">3.0 мм</option></select></div><div class="form-group"><label class="form-label">Размер листа</label><select id="hk-size" class="form-select" onchange="app.calcMetal('hk')"><option value="1000x2000">1000×2000 мм</option><option value="1250x2500" selected>1250×2500 мм</option><option value="1500x3000">1500×3000 мм</option></select></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Длина детали, мм</label><input type="number" id="hk-part-length" class="form-input" value="500" min="1" onchange="app.calcMetal('hk')"></div><div class="form-group"><label class="form-label">Ширина детали, мм</label><input type="number" id="hk-part-width" class="form-input" value="500" min="1" onchange="app.calcMetal('hk')"></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Кол-во деталей</label><input type="number" id="hk-qty" class="form-input" value="1" min="1" onchange="app.calcMetal('hk')"></div><div class="form-group"><label class="form-label">К-т запаса (K_waste)</label><select id="hk-kwaste" class="form-select" onchange="app.calcMetal('hk')"><option value="1.00">1.00 (простые)</option><option value="1.10">1.10</option><option value="1.15" selected>1.15 (средние)</option><option value="1.20">1.20</option><option value="1.30">1.30 (сложные)</option><option value="1.50">1.50 (очень сложные)</option></select></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Периметр (длина реза), мм</label><input type="number" id="hk-perimeter" class="form-input" value="2000" min="0" onchange="app.calcMetal('hk')"></div><div class="form-group"><label class="form-label">Цена резки, ₽/мм</label><input type="number" id="hk-cut-price" class="form-input" value="0.5" step="0.01" min="0" onchange="app.calcMetal('hk')"></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Доставка, ₽/рейс</label><input type="number" id="hk-delivery" class="form-input" value="5000" min="0" onchange="app.calcMetal('hk')"></div><div class="form-group"><label class="form-label">Накладные (Fixed), ₽</label><input type="number" id="hk-fixed" class="form-input" value="50" min="0" onchange="app.calcMetal('hk')"></div></div>
+      <button class="btn btn--primary" onclick="app.calcMetal('hk')" style="margin-top:.5rem">🧮 Рассчитать</button>
+      <div id="hk-results"></div>
+      <div style="text-align:right;margin-top:.75rem"><button class="btn btn--success" onclick="app.addToCart('hk')">➕ В корзину</button></div>
+    </div>
+  </div>
+  <div id="metal-gk" class="block" style="display:none">
+    <div class="card">
+      <div class="card__header"><span class="card__title">🟫 Горячекатаная сталь (Г/К)</span></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Толщина, мм</label><select id="gk-thickness" class="form-select" onchange="app.calcMetal('gk')"><option value="2.0">2.0 мм</option><option value="3.0">3.0 мм</option><option value="4.0" selected>4.0 мм</option><option value="5.0">5.0 мм</option><option value="6.0">6.0 мм</option><option value="8.0">8.0 мм</option><option value="10.0">10.0 мм</option></select></div><div class="form-group"><label class="form-label">Размер листа</label><select id="gk-size" class="form-select" onchange="app.calcMetal('gk')"><option value="1000x2000">1000×2000 мм</option><option value="1250x2500">1250×2500 мм</option><option value="1500x3000" selected>1500×3000 мм</option></select></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Длина детали, мм</label><input type="number" id="gk-part-length" class="form-input" value="500" min="1" onchange="app.calcMetal('gk')"></div><div class="form-group"><label class="form-label">Ширина детали, мм</label><input type="number" id="gk-part-width" class="form-input" value="500" min="1" onchange="app.calcMetal('gk')"></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Кол-во деталей</label><input type="number" id="gk-qty" class="form-input" value="1" min="1" onchange="app.calcMetal('gk')"></div><div class="form-group"><label class="form-label">К-т запаса (K_waste)</label><select id="gk-kwaste" class="form-select" onchange="app.calcMetal('gk')"><option value="1.00">1.00 (простые)</option><option value="1.10">1.10</option><option value="1.15" selected>1.15 (средние)</option><option value="1.20">1.20</option><option value="1.30">1.30 (сложные)</option><option value="1.50">1.50 (очень сложные)</option></select></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Периметр (длина реза), мм</label><input type="number" id="gk-perimeter" class="form-input" value="2000" min="0" onchange="app.calcMetal('gk')"></div><div class="form-group"><label class="form-label">Цена резки, ₽/мм</label><input type="number" id="gk-cut-price" class="form-input" value="0.5" step="0.01" min="0" onchange="app.calcMetal('gk')"></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Доставка, ₽/рейс</label><input type="number" id="gk-delivery" class="form-input" value="5000" min="0" onchange="app.calcMetal('gk')"></div><div class="form-group"><label class="form-label">Накладные (Fixed), ₽</label><input type="number" id="gk-fixed" class="form-input" value="50" min="0" onchange="app.calcMetal('gk')"></div></div>
+      <button class="btn btn--primary" onclick="app.calcMetal('gk')" style="margin-top:.5rem">🧮 Рассчитать</button>
+      <div id="gk-results"></div>
+      <div style="text-align:right;margin-top:.75rem"><button class="btn btn--success" onclick="app.addToCart('gk')">➕ В корзину</button></div>
+    </div>
+  </div>
+  <div id="metal-dxf" class="block" style="display:none">
+    <div class="card">
+      <div class="card__header"><span class="card__title">📐 DXF-парсер</span></div>
+      <div class="dxf-upload" id="dxfDropZone" onclick="document.getElementById('dxfFileInput').click()">
+        <div style="font-size:2rem;margin-bottom:.5rem">📂</div>
+        <div style="font-weight:600;margin-bottom:.25rem">Перетащите DXF-файл сюда</div>
+        <div style="font-size:.8rem;color:var(--text-muted)">Или нажмите для выбора</div>
+        <input type="file" id="dxfFileInput" accept=".dxf" style="display:none" onchange="app.handleDxfFile(this)">
+      </div>
+      <div id="dxfFileName" style="font-size:.85rem;color:var(--text-muted);text-align:center"></div>
+      <div id="dxfResults" style="display:none">
+        <div class="dxf-canvas-wrap"><canvas id="dxfCanvas" width="700" height="400"></canvas></div>
+        <div class="dxf-stats" id="dxfStats"></div>
+        <div style="margin-top:1rem;padding:1rem;background:var(--bg);border-radius:var(--radius-sm)">
+          <label>Применить данные к:</label>
+          <select id="dxfTargetTab" class="form-select" style="width:auto;display:inline-block;margin:0 .5rem"><option value="oc">🟦 ОЦ</option><option value="hk">⬜ Х/К</option><option value="gk">🟫 Г/К</option></select>
+          <button class="btn btn--purple btn-sm" onclick="app.applyDxfToTab()">✅ Заполнить поля</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="metal-cart" class="block" style="display:none">
+    <div class="cart">
+      <h3 style="margin-bottom:1rem">🛒 Корзина</h3>
+      <div id="cart-content"></div>
+      <div id="cart-total-area" class="cart-total"></div>
+      <div class="btn-group" style="margin-top:1rem">
+        <button class="btn btn--orange btn-sm" onclick="window.print()">🖨️ Печать</button>
+        <button class="btn btn--purple btn-sm" onclick="app.exportCartCSV()">📄 CSV</button>
+        <button class="btn btn--blue btn-sm" onclick="app.saveHtml()">💾 HTML</button>
+        <button class="btn btn--danger btn-sm" onclick="app.clearCart()">🗑️ Очистить</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DOOR CALCULATOR ===== -->
+<section id="sec-doors" class="section">
+  <h2 class="section-title"><span class="icon">🚪</span> Калькулятор дверей</h2>
+  <div class="card">
+    <div class="card__header"><span class="card__title">Параметры дверного блока</span></div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Тип двери</label>
+        <select id="door-type" class="form-select" onchange="app.calcDoor()">
+          <option value="outdoor-single">Одностворчатая наружная</option>
+          <option value="outdoor-double">Двустворчатая наружная</option>
+          <option value="indoor-single">Одностворчатая внутренняя</option>
+          <option value="indoor-double">Двустворчатая внутренняя</option>
+          <option value="fire-ei60-single">Противопожарная EI-60 (одноств.)</option>
+          <option value="fire-ei60-double">Противопожарная EI-60 (двуств.)</option>
+          <option value="technical">Техническая</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Высота, мм</label>
+        <input type="number" id="door-height" class="form-input" value="2100" min="500" max="2450" onchange="app.calcDoor()">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Ширина, мм</label>
+        <input type="number" id="door-width" class="form-input" value="900" min="400" max="2290" onchange="app.calcDoor()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Количество</label>
+        <input type="number" id="door-qty" class="form-input" value="1" min="1" onchange="app.calcDoor()">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Опции</label>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem">
+        <label class="checkbox-label"><input type="checkbox" id="opt-antipanic" onchange="app.calcDoor()"> Антипаника (+8 500 ₽)</label>
+        <label class="checkbox-label"><input type="checkbox" id="opt-electro" onchange="app.calcDoor()"> Электромагнитный замок (+7 200 ₽)</label>
+        <label class="checkbox-label"><input type="checkbox" id="opt-closer" onchange="app.calcDoor()"> Доводчик (+3 200 ₽)</label>
+        <label class="checkbox-label"><input type="checkbox" id="opt-autothreshold" onchange="app.calcDoor()"> Автопорог (+5 800 ₽)</label>
+        <label class="checkbox-label"><input type="checkbox" id="opt-canopy" onchange="app.calcDoor()"> Козырёк (+4 500 ₽)</label>
+        <label class="checkbox-label"><input type="checkbox" id="opt-vision" onchange="app.calcDoor()"> Стеклопакет (+12 000 ₽)</label>
+      </div>
+    </div>
+    <button class="btn btn--primary" onclick="app.calcDoor()">🧮 Рассчитать стоимость</button>
+    <div id="door-results"></div>
+  </div>
+  <div class="card">
+    <div class="card__header"><span class="card__title">📐 Справочник просветов (СП / ГОСТ)</span></div>
+    <div class="table-container">
+      <table class="data-table">
+        <thead><tr><th>Элемент</th><th>Минимум</th><th>Стандарт</th><th>Максимум</th></tr></thead>
+        <tbody>
+          <tr><td>Порог</td><td>14 мм</td><td>28 мм</td><td>42 мм</td></tr>
+          <tr><td>Наличник</td><td>30 мм</td><td>55 мм</td><td>—</td></tr>
+          <tr><td>Коробка</td><td>105 мм</td><td>—</td><td>—</td></tr>
+          <tr><td>Полотно</td><td>74 мм</td><td>—</td><td>—</td></tr>
+          <tr><td>Макс. высота</td><td>—</td><td>—</td><td>2450 мм</td></tr>
+          <tr><td>Макс. ширина (двуств.)</td><td>—</td><td>—</td><td>2290 мм</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ===== KP GENERATOR ===== -->
+<section id="sec-kp" class="section">
+  <h2 class="section-title"><span class="icon">📄</span> Генератор КП</h2>
+  <div class="card">
+    <div class="card__header"><span class="card__title">Данные заказчика</span></div>
+    <div class="form-group">
+      <label class="form-label">Название организации *</label>
+      <input type="text" id="kp-client" class="form-input" placeholder="ООО «СтройИнвест»">
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">ИНН / КПП</label><input type="text" id="kp-inn" class="form-input" placeholder="7812345678 / 781201001"></div>
+      <div class="form-group"><label class="form-label">Адрес</label><input type="text" id="kp-address" class="form-input" placeholder="г. Санкт-Петербург, ..."></div>
+    </div>
+    <div class="form-row-3">
+      <div class="form-group"><label class="form-label">Контактное лицо</label><input type="text" id="kp-contact" class="form-input" placeholder="Иванов И.И."></div>
+      <div class="form-group"><label class="form-label">Телефон</label><input type="tel" id="kp-phone" class="form-input" placeholder="+7 (812) 123-45-67"></div>
+      <div class="form-group"><label class="form-label">Email</label><input type="email" id="kp-email" class="form-input" placeholder="info@example.ru"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card__header"><span class="card__title">Позиции КП</span><button class="btn btn-sm btn--success" onclick="app.addKpItem()">➕ Добавить</button></div>
+    <div id="kp-items">
+      <div class="form-row kp-item" style="align-items:end">
+        <div class="form-group" style="flex:2"><label class="form-label">Наименование</label><input type="text" class="form-input kp-item-name" value="Дверь противопожарная EI-60" placeholder="Наименование"></div>
+        <div class="form-group" style="flex:1"><label class="form-label">Кол-во</label><input type="number" class="form-input kp-item-qty" value="5" min="1" placeholder="Кол-во"></div>
+        <div class="form-group" style="flex:1"><label class="form-label">Цена/шт, ₽</label><input type="number" class="form-input kp-item-price" value="35000" min="0" placeholder="Цена"></div>
+        <button class="btn btn--danger btn-sm" onclick="this.closest('.kp-item').remove()" style="margin-bottom:.25rem">✕</button>
+      </div>
+    </div>
+    <button class="btn btn--primary" onclick="app.generateKP()" style="margin-top:1rem">📄 Сформировать КП</button>
+  </div>
+  <div id="kp-result" style="display:none">
+    <div class="card">
+      <div class="card__header"><span class="card__title">Предпросмотр КП</span><span class="card__badge" style="background:var(--success)">Готово</span></div>
+      <div id="kp-preview-content" class="kp-preview"></div>
+      <div class="btn-group" style="margin-top:1rem">
+        <button class="btn btn--secondary" onclick="app.copyKP()">📋 Копировать</button>
+        <button class="btn btn--success" onclick="window.print()">🖨️ Печать / PDF</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== INSTALLATION PRICING ===== -->
+<section id="sec-install" class="section">
+  <h2 class="section-title"><span class="icon">🛠️</span> Прайс монтажа</h2>
+  <div class="card">
+    <div class="card__header"><span class="card__title">1. Замеры и выезд</span></div>
+    <div class="table-container">
+      <table class="data-table">
+        <thead><tr><th>№</th><th>Наименование работ</th><th>Ед.</th><th>Цена, ₽</th><th>Кол-во</th><th>Сумма, ₽</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Замер 1-го проёма (стандартный)</td><td>усл.</td><td>1 200,00</td><td><input type="number" class="form-input qty" value="0" min="0" style="width:60px" onchange="app.calcInstall()"></td><td class="sum">0,00</td></tr>
+          <tr><td>2</td><td>Каждый следующий проём на одном адресе</td><td>усл.</td><td>120,00</td><td><input type="number" class="form-input qty" value="0" min="0" style="width:60px" onchange="app.calcInstall()"></td><td class="sum">0,00</td></tr>
+          <tr><td>3</td><td>Сложный замер (нестандартная геометрия)</td><td>усл.</td><td>1 800,00</td><td><input type="number" class="form-input qty" value="0" min="0" style="width:60px" onchange="app.calcInstall()"></td><td class="sum">0,00</td></tr>
+          <tr><td>4</td><td>Выезд за черту города (за 1 км)</td><td>км</td><td>60,00</td><td><input type="number" class="form-input qty" value="0" min="0" style="width:60px" onchange="app.calcInstall()"></td><td class="sum">0,00</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card__header"><span class="card__title">2. Доставка и подъём</span></div>
+    <div class="table-container">
+      <table class="data-table">
+        <thead><tr><th>№</th><th>Наименование работ</th><th>Ед.</th><th>Цена, ₽</th><th>Кол-во</th><th>Сумма, ₽</th></tr></thead>
+        <tbody>
+          <tr><td>5</td><td>Доставка дверного блока по СПб</td><td>рейс</td><td>6 600,00</td><td><input type="number" class="form-input qty" value="0" min="0" style="width:60px" onchange="app.calcInstall()"></td><td class="sum">0,00</td></tr>
+          <tr><td>6</td><td>Подъём за 1 этаж (до 120 кг)</td><td>этаж</td><td>480,00</td><td><input type="number" class="form-input qty" value="0" min="0" style="width:60px" onchange="app.calcInstall()"></td><td class="sum">0,00</td></tr>
+          <tr><td>7</td><td>Подъём за 1 этаж (от 120 кг)</td><td>этаж</td><td>600,00</td><td><input type="number" class="form-input qty" value="0" min="0" style="width:60px" onchange="app.calcInstall()"></td><td class="sum">0,00</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card__header"><span class="card__title">3. Демонтаж</span></div>
+    <div class="table-container">
+      <table class="data-table">
+        <thead><tr><th>№</th><th>Наименование работ</th><th>Ед.</th><th>Цена, ₽</th><th>Кол-во</th><th>Сумма, ₽</th></tr></thead>
+        <tbody>
+          <tr><td>8</td><td>Демонтаж старой двери (стандарт)</td><td>шт</td><td>480,00</td><td><input type="number" class="form-input qty" value="0" min="0" style="width:60px" onchange="app.calcInstall()"></td><td class="sum">0,00</td></tr>
+          <tr><td>9</td><td>Демонтаж старой двери (сложный)</td><td>шт</td><td>1 440,00</td><td><input type="number" class="form-input qty" value="0" min="0" style="width:60px" onchange="app.calcInstall()"></td><td class="sum">0,00</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card__header"><span class="card__title">4. Монтажные работы</span></div>
+    <div class="table-container">
+      <table class="data-table">
+        <thead><tr><th>№</th><th>Наименование работ</th><th>Ед.</th><th>Цена, ₽</th><th>Кол-во</th><th>Сумма, ₽</th></tr></thead>
+        <tbody>
+          <tr><td>10</td><td>Монтаж в стандартный проём (до 990×2200)</td><td>шт</td><td>4 200,00</td><td><input type="number" class="form-input qty" value="0" min="0" style="width:60px" onchange="app.calcInstall()"></td><td class="sum">0,00</td></tr>
+          <tr><td>11</td><td>Монтаж с ПСУЛ/герметиком (до 990×2200)</td><td>шт</td><td>6 000,00</td><td><input type="number" class="form-input qty" value="0" min="0" style="width:60px" onchange="app.calcInstall()"></td><td class="sum">0,00</td></tr>
+          <tr><td>12</td><td>Монтаж (до 1400×2200)</td><td>шт</td><td>7 800,00</td><td><input type="number" class="form-input qty" value="0" min="0" style="width:60px" onchange="app.calcInstall()"></td><td class="sum">0,00</td></tr>
+          <tr><td>13</td><td>Монтаж (до 1600×2200)</td><td>шт</td><td>9 600,00</td><td><input type="number" class="form-input qty" value="0" min="0" style="width:60px" onchange="app.calcInstall()"></td><td class="sum">0,00</td></tr>
+          <tr><td>14</td><td>Монтаж (до 1800×2200)</td><td>шт</td><td>11 400,00</td><td><input type="number" class="form-input qty" value="0" min="0" style="width:60px" onchange="app.calcInstall()"></td><td class="sum">0,00</td></tr>
+          <tr><td>15</td><td>Монтаж двустворчатой (до 1400×2200)</td><td>шт</td><td>10 800,00</td><td><input type="number" class="form-input qty" value="0" min="0" style="width:60px" onchange="app.calcInstall()"></td><td class="sum">0,00</td></tr>
+          <tr><td>16</td><td>Монтаж двустворчатой (до 1800×2200)</td><td>шт</td><td>13 200,00</td><td><input type="number" class="form-input qty" value="0" min="0" style="width:60px" onchange="app.calcInstall()"></td><td class="sum">0,00</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card__header"><span class="card__title">5. Отделочные работы</span></div>
+    <div class="table-container">
+      <table class="data-table">
+        <thead><tr><th>№</th><th>Наименование работ</th><th>Ед.</th><th>Цена, ₽</th><th>Кол-во</th><th>Сумма, ₽</th></tr></thead>
+        <tbody>
+          <tr><td>17</td><td>Откосы ГКЛ (комплект)</td><td>компл.</td><td>3 849,00</td><td><input type="number" class="form-input qty" value="0" min="0" style="width:60px" onchange="app.calcInstall()"></td><td class="sum">0,00</td></tr>
+          <tr><td>18</td><td>Откосы штукатурные (комплект)</td><td>компл.</td><td>4 168,00</td><td><input type="number" class="form-input qty" value="0" min="0" style="width:60px" onchange="app.calcInstall()"></td><td class="sum">0,00</td></tr>
+          <tr><td>19</td><td>Металлопортал (комплект)</td><td>компл.</td><td>19 520,00</td><td><input type="number" class="form-input qty" value="0" min="0" style="width:60px" onchange="app.calcInstall()"></td><td class="sum">0,00</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card__header"><span class="card__title">6. Дополнительные работы</span></div>
+    <div class="table-container">
+      <table class="data-table">
+        <thead><tr><th>№</th><th>Наименование работ</th><th>Ед.</th><th>Цена, ₽</th><th>Кол-во</th><th>Сумма, ₽</th></tr></thead>
+        <tbody>
+          <tr><td>20</td><td>Документация (паспорт, акт)</td><td>компл.</td><td>45 000,00</td><td><input type="number" class="form-input qty" value="0" min="0" style="width:60px" onchange="app.calcInstall()"></td><td class="sum">0,00</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="result-block" style="border-left-color:var(--success)">
+    <div class="result-block__title">💰 ИТОГО монтажные работы (с НДС 22%)</div>
+    <div class="result-row result-row--total"><span>ОБЩАЯ СУММА</span><span class="result-row__value" id="install-total">0,00 ₽</span></div>
+  </div>
+</section>
+
+<!-- ===== RFM ANALYSIS ===== -->
+<section id="sec-rfm" class="section">
+  <h2 class="section-title"><span class="icon">📈</span> RFM-анализ клиента</h2>
+  <div class="card">
+    <div class="card__header"><span class="card__title">Данные клиента</span><span class="card__badge">CRM</span></div>
+    <div class="form-group">
+      <label class="form-label">Всего заказов</label>
+      <input type="number" id="rfm-orders" class="form-input" value="5" step="1" min="0">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Дней с последнего заказа</label>
+      <input type="number" id="rfm-days" class="form-input" value="45" step="1" min="0">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Общая сумма заказов, ₽</label>
+      <input type="number" id="rfm-sum" class="form-input" value="250000" step="1000" min="0">
+    </div>
+    <button class="btn btn--primary" onclick="app.calcRFM()">📊 Анализировать</button>
+    <div id="rfm-result" style="display:none">
+      <div class="result-block" style="border-left-color:var(--success)">
+        <div class="result-block__title">📈 RFM-скоринг</div>
+        <div class="form-row-3" style="margin-bottom:.5rem">
+          <div style="text-align:center;flex:1"><div style="font-size:.75rem;color:var(--text-muted)">Recency</div><div id="rfm-r-val" style="font-size:1.3rem;font-weight:700;color:var(--secondary)">—</div><div style="font-size:.7rem;color:var(--text-muted)">из 5</div></div>
+          <div style="text-align:center;flex:1"><div style="font-size:.75rem;color:var(--text-muted)">Frequency</div><div id="rfm-f-val" style="font-size:1.3rem;font-weight:700;color:var(--secondary)">—</div><div style="font-size:.7rem;color:var(--text-muted)">из 5</div></div>
+          <div style="text-align:center;flex:1"><div style="font-size:.75rem;color:var(--text-muted)">Monetary</div><div id="rfm-m-val" style="font-size:1.3rem;font-weight:700;color:var(--secondary)">—</div><div style="font-size:.7rem;color:var(--text-muted)">из 5</div></div>
+        </div>
+        <div style="text-align:center;padding:1rem 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:.5rem 0">
+          <div style="font-size:.8rem;color:var(--text-muted);margin-bottom:.3rem">Общий RFM-скор</div>
+          <div id="rfm-total" style="font-size:2rem;font-weight:700;color:var(--primary)">—</div>
+          <div style="font-size:.8rem;color:var(--text-muted)">из 15</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:.8rem;color:var(--text-muted);margin-bottom:.3rem">Сегмент</div>
+          <div id="rfm-segment" class="segment-badge">—</div>
+          <div id="rfm-action" style="font-size:.85rem;color:var(--text-muted);margin-top:.5rem;font-style:italic">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CRM ===== -->
+<section id="sec-crm" class="section">
+  <h2 class="section-title"><span class="icon">🏢</span> CRM</h2>
+  <div class="card">
+    <div class="card__header"><span class="card__title">📝 Новый клиент / заявка</span></div>
+    <div class="form-group">
+      <label class="form-label">ФИО / Организация *</label>
+      <input type="text" id="crm-name" class="form-input" placeholder="ООО «СтройИнвест»">
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Телефон *</label><input type="tel" id="crm-phone" class="form-input" placeholder="+7 (921) 863-56-50"></div>
+      <div class="form-group"><label class="form-label">Email</label><input type="email" id="crm-email" class="form-input" placeholder="info@example.ru"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Адрес объекта</label>
+      <input type="text" id="crm-address" class="form-input" placeholder="г. Санкт-Петербург, ...">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Статус</label>
+        <select id="crm-status" class="form-select">
+          <option>Не назначен</option><option>Запланирован</option><option>В работе</option><option>Выполнен</option><option>Отменён</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Сумма КП, ₽</label>
+        <input type="number" id="crm-amount" class="form-input" value="0" min="0">
+      </div>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn--primary" onclick="app.saveCRM()">💾 Сохранить</button>
+      <button class="btn btn--secondary" onclick="app.exportCRM()">📊 Экспорт CSV</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card__header"><span class="card__title">📋 История заявок</span><span class="card__badge" id="crm-count">0</span></div>
+    <div class="table-container">
+      <table class="data-table">
+        <thead><tr><th>Дата</th><th>Клиент</th><th>Телефон</th><th>Статус</th><th>Сумма, ₽</th><th></th></tr></thead>
+        <tbody id="crm-history"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ===== BOTTOM NAVIGATION ===== -->
+<nav class="bottom-nav">
+  <button class="bottom-nav__item active" onclick="app.showSection('sec-dashboard')" data-section="sec-dashboard">
+    <span class="nav-icon">📊</span><span>Главная</span>
+  </button>
+  <button class="bottom-nav__item" onclick="app.showSection('sec-metal')" data-section="sec-metal">
+    <span class="nav-icon">🔩</span><span>Металл</span>
+  </button>
+  <button class="bottom-nav__item" onclick="app.showSection('sec-doors')" data-section="sec-doors">
+    <span class="nav-icon">🚪</span><span>Двери</span>
+  </button>
+  <button class="bottom-nav__item" onclick="app.showSection('sec-kp')" data-section="sec-kp">
+    <span class="nav-icon">📄</span><span>КП</span>
+  </button>
+  <button class="bottom-nav__item" onclick="app.showSection('sec-install')" data-section="sec-install">
+    <span class="nav-icon">🛠️</span><span>Монтаж</span>
+  </button>
+  <button class="bottom-nav__item" onclick="app.showSection('sec-rfm')" data-section="sec-rfm">
+    <span class="nav-icon">📈</span><span>RFM</span>
+  </button>
+  <button class="bottom-nav__item" onclick="app.showSection('sec-crm')" data-section="sec-crm">
+    <span class="nav-icon">🏢</span><span>CRM</span>
+  </button>
+</nav>
+
+<!-- ===== MODAL ===== -->
+<div class="modal-overlay" id="modal-overlay" onclick="app.closeModal()"></div>
+<div class="modal" id="modal">
+  <div class="modal__header">
+    <div class="modal__title" id="modal-title">Заголовок</div>
+    <button class="modal__close" onclick="app.closeModal()">✕</button>
+  </div>
+  <div id="modal-body"></div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div id="toast" class="toast"></div>
+
+<script>
+// ==================== APP ====================
+const app = {
+  cart: [],
+  lastDxfData: null,
+  deferredPrompt: null,
+
+  init() {
+    // Splash screen
+    setTimeout(() => {
+      document.getElementById('splash').classList.add('hidden');
+    }, 1800);
+
+    // Date
+    const now = new Date();
+    document.getElementById('dash-date').textContent = now.toLocaleDateString('ru-RU');
+
+    // Load saved prices
+    this.loadPrices();
+
+    // Load cart
+    const savedCart = localStorage.getItem('fp_cart');
+    if (savedCart) { this.cart = JSON.parse(savedCart); this.updateCartCount(); }
+
+    // Load CRM
+    this.loadCRM();
+
+    // Update stats
+    this.updateStats();
+
+    // Online status
+    this.updateOnlineStatus();
+    window.addEventListener('online', () => this.updateOnlineStatus());
+    window.addEventListener('offline', () => this.updateOnlineStatus());
+
+    // Install prompt
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      this.deferredPrompt = e;
+      if (!localStorage.getItem('fp_install_dismissed')) {
+        document.getElementById('install-prompt').style.display = 'flex';
+      }
+    });
+
+    // DXF drag & drop
+    const dz = document.getElementById('dxfDropZone');
+    if (dz) {
+      ['dragenter','dragover','dragleave','drop'].forEach(ev => {
+        dz.addEventListener(ev, e => { e.preventDefault(); e.stopPropagation(); });
+      });
+      dz.addEventListener('dragenter', () => dz.classList.add('dragover'));
+      dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+      dz.addEventListener('drop', (e) => {
+        dz.classList.remove('dragover');
+        const file = e.dataTransfer.files[0];
+        if (file) {
+          const input = document.getElementById('dxfFileInput');
+          const dt = new DataTransfer(); dt.items.add(file); input.files = dt.files;
+          this.handleDxfFile(input);
+        }
+      });
+    }
+
+    // Initial calculations
+    this.calcMetal('oc');
+    this.calcDoor();
+    this.calcInstall();
+
+    console.log('[FireProm PRO v7.0] Initialized');
+  },
+
+  // ===== NAVIGATION =====
+  showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.bottom-nav__item').forEach(n => n.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    const nav = document.querySelector('.bottom-nav__item[data-section="' + id + '"]');
+    if (nav) nav.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (id === 'sec-metal') { this.showMetalTab('oc'); }
+  },
+
+  showMetalTab(tab) {
+    document.querySelectorAll('#sec-metal .block').forEach(b => b.style.display = 'none');
+    document.querySelectorAll('#sec-metal .inner-tab').forEach(t => t.classList.remove('active'));
+    const block = document.getElementById('metal-' + tab);
+    if (block) block.style.display = 'block';
+    const btn = Array.from(document.querySelectorAll('#sec-metal .inner-tab')).find(t => t.textContent.includes(tab === 'oc' ? 'ОЦ' : tab === 'hk' ? 'Х/К' : tab === 'gk' ? 'Г/К' : tab === 'dxf' ? 'DXF' : 'Корзина'));
+    if (btn) btn.classList.add('active');
+    if (tab === 'cart') this.renderCart();
+  },
+
+  // ===== THEME =====
+  toggleTheme() {
+    document.body.classList.toggle('dark');
+    localStorage.setItem('fp_dark', document.body.classList.contains('dark'));
+    this.showToast(document.body.classList.contains('dark') ? '🌙 Тёмная тема' : '☀️ Светлая тема');
+  },
+
+  // ===== TOAST =====
+  showToast(msg, type) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast toast--' + (type || 'success');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  },
+
+  // ===== MODAL =====
+  openModal(title, body) {
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-body').innerHTML = body;
+    document.getElementById('modal-overlay').classList.add('show');
+    document.getElementById('modal').classList.add('show');
+  },
+  closeModal() {
+    document.getElementById('modal-overlay').classList.remove('show');
+    document.getElementById('modal').classList.remove('show');
+  },
+
+  // ===== ONLINE STATUS =====
+  updateOnlineStatus() {
+    document.getElementById('offline-bar').style.display = navigator.onLine ? 'none' : 'block';
+  },
+
+  // ===== INSTALL =====
+  install() {
+    if (this.deferredPrompt) {
+      this.deferredPrompt.prompt();
+      this.deferredPrompt.userChoice.then(() => { this.deferredPrompt = null; });
+    }
+    document.getElementById('install-prompt').style.display = 'none';
+  },
+  dismissInstall() {
+    localStorage.setItem('fp_install_dismissed', 'true');
+    document.getElementById('install-prompt').style.display = 'none';
+  },
+
+  // ===== FORMATTERS =====
+  fmtMoney(n) {
+    return (isFinite(n) ? n : 0).toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  },
+  fmtInt(n) {
+    return Math.round(isFinite(n) ? n : 0).toLocaleString('ru-RU');
+  },
+  getNowMSK() {
+    const d = new Date();
+    return new Date(d.getTime() + (d.getTimezoneOffset() + 180) * 60000);
+  },
+  formatDate(d) {
+    return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  },
+  safeNum(id, def) {
+    const el = document.getElementById(id);
+    if (!el) return def;
+    const v = parseFloat(el.value.replace(',', '.'));
+    return isNaN(v) ? def : v;
+  },
+  safeStr(id, def) {
+    const el = document.getElementById(id);
+    return el ? (el.value.trim() || def) : def;
+  },
+
+  // ===== PRICES =====
+  loadPrices() {
+    const oc = localStorage.getItem('fp_price_oc');
+    const hk = localStorage.getItem('fp_price_hk');
+    const gk = localStorage.getItem('fp_price_gk');
+    const vat = localStorage.getItem('fp_vat');
+    if (oc) document.getElementById('price-oc').value = oc;
+    if (hk) document.getElementById('price-hk').value = hk;
+    if (gk) document.getElementById('price-gk').value = gk;
+    if (vat) document.getElementById('vat-rate').value = vat;
+    if (localStorage.getItem('fp_dark') === 'true') document.body.classList.add('dark');
+    this.updatePriceHints();
+  },
+
+  savePrices() {
+    localStorage.setItem('fp_price_oc', document.getElementById('price-oc').value);
+    localStorage.setItem('fp_price_hk', document.getElementById('price-hk').value);
+    localStorage.setItem('fp_price_gk', document.getElementById('price-gk').value);
+    localStorage.setItem('fp_vat', document.getElementById('vat-rate').value);
+    this.updatePriceHints();
+    this.showToast('💾 Цены сохранены');
+  },
+
+  resetPrices() {
+    document.getElementById('price-oc').value = '85330';
+    document.getElementById('price-hk').value = '77210';
+    document.getElementById('price-gk').value = '66760';
+    document.getElementById('vat-rate').value = '22';
+    this.savePrices();
+    this.showToast('🔄 Цены сброшены');
+  },
+
+  updatePriceHints() {
+    const vat = parseFloat(document.getElementById('vat-rate').value) || 22;
+    const oc = parseFloat(document.getElementById('price-oc').value) || 0;
+    const hk = parseFloat(document.getElementById('price-hk').value) || 0;
+    const gk = parseFloat(document.getElementById('price-gk').value) || 0;
+    document.getElementById('hint-oc').textContent = '≈ ' + this.fmtMoney(oc / 1000) + ' ₽/кг';
+    document.getElementById('hint-hk').textContent = '≈ ' + this.fmtMoney(hk / 1000) + ' ₽/кг';
+    document.getElementById('hint-gk').textContent = '≈ ' + this.fmtMoney(gk / 1000) + ' ₽/кг';
+  },
+
+  // ===== METAL CALCULATOR =====
+  calcMetal(type) {
+    const priceMap = { oc: 'price-oc', hk: 'price-hk', gk: 'price-gk' };
+    const priceTon = this.safeNum(priceMap[type], type === 'oc' ? 85330 : type === 'hk' ? 77210 : 66760);
+    const T = this.safeNum(type + '-thickness', 1.5);
+    const sheetStr = document.getElementById(type + '-size')?.value || '1250x2500';
+    const [SW, SH] = sheetStr.split('x').map(Number);
+    const qty = Math.max(1, this.safeNum(type + '-qty', 1));
+    const L = Math.max(0, this.safeNum(type + '-part-length', 500));
+    const W = Math.max(0, this.safeNum(type + '-part-width', 500));
+    const P = Math.max(0, this.safeNum(type + '-perimeter', 2000));
+    const kwaste = this.safeNum(type + '-kwaste', 1.15);
+    const priceCut = this.safeNum(type + '-cut-price', 0.5);
+    const delivery = this.safeNum(type + '-delivery', 5000);
+    const fixed = this.safeNum(type + '-fixed', 50);
+
+    const density = 0.00000785; // 7850 kg/m³
+    const areaPart = L * W;
+    const massPart = areaPart * T * density;
+    const priceKg = priceTon / 1000;
+    const costMetal = massPart * priceKg;
+    const costCut = P * priceCut;
+    const deliveryPerPart = delivery / qty;
+    const totalPerPart = (costMetal + costCut + fixed + deliveryPerPart) * kwaste;
+    const total = totalPerPart * qty;
+
+    const typeNames = { oc: 'Оцинкованная сталь (ОЦ)', hk: 'Холоднокатаная сталь (Х/К)', gk: 'Горячекатаная сталь (Г/К)' };
+    const icons = { oc: '🟦', hk: '⬜', gk: '🟫' };
+
+    document.getElementById(type + '-results').innerHTML =
+      '<div class="result-block">' +
+      '<div class="result-block__title">📊 Результат расчёта</div>' +
+      '<div class="result-row"><span>📐 Площадь детали:</span><span class="result-row__value">' + this.fmtMoney(areaPart) + ' мм² (' + this.fmtMoney(areaPart / 1e6) + ' м²)</span></div>' +
+      '<div class="result-row"><span>⚖️ Масса детали:</span><span class="result-row__value">' + this.fmtMoney(massPart) + ' кг</span></div>' +
+      '<div class="result-row"><span>💰 Металл (за деталь):</span><span class="result-row__value">' + this.fmtMoney(costMetal) + ' ₽</span></div>' +
+      '<div class="result-row"><span>✂️ Резка (за деталь):</span><span class="result-row__value">' + this.fmtMoney(costCut) + ' ₽</span></div>' +
+      '<div class="result-row"><span>📦 Доставка/накладные:</span><span class="result-row__value">' + this.fmtMoney(deliveryPerPart + fixed) + ' ₽</span></div>' +
+      '<div class="result-row"><span>🧮 Коэф. сложности:</span><span class="result-row__value">' + kwaste + '</span></div>' +
+      '<div class="result-row result-row--total"><span>🎯 ИТОГО за ' + qty + ' деталей:</span><span class="result-row__value">' + this.fmtMoney(total) + ' ₽</span></div>' +
+      '</div>';
+
+    window['lastCalc_' + type] = {
+      typeName: typeNames[type], icon: icons[type], thickness: T,
+      sheetSize: sheetStr, qty: qty, massPart: massPart,
+      totalPrice: total, perPart: totalPerPart,
+      details: 'Деталь ' + L + '×' + W + '×' + T + ' мм, рез ' + P + ' мм'
+    };
+  },
+
+  // ===== CART =====
+  addToCart(type) {
+    const data = window['lastCalc_' + type];
+    if (!data) { this.showToast('Сначала выполните расчёт', 'error'); return; }
+    this.cart.push({ ...data, id: Date.now() + Math.random() });
+    this.saveCart();
+    this.updateCartCount();
+    this.showToast('✅ Добавлено: ' + data.typeName);
+  },
+
+  removeFromCart(id) {
+    this.cart = this.cart.filter(item => item.id !== id);
+    this.saveCart();
+    this.updateCartCount();
+    this.renderCart();
+  },
+
+  clearCart() {
+    if (!confirm('Очистить корзину?')) return;
+    this.cart = [];
+    this.saveCart();
+    this.updateCartCount();
+    this.renderCart();
+    this.showToast('🗑️ Корзина очищена');
+  },
+
+  saveCart() {
+    localStorage.setItem('fp_cart', JSON.stringify(this.cart));
+  },
+
+  updateCartCount() {
+    document.getElementById('cart-count').textContent = this.cart.length;
+    document.getElementById('stat-cart').textContent = this.cart.length;
+  },
+
+  renderCart() {
+    const container = document.getElementById('cart-content');
+    const totalArea = document.getElementById('cart-total-area');
+    if (this.cart.length === 0) {
+      container.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-muted)">🛒 Корзина пуста</div>';
+      totalArea.innerHTML = '';
+      return;
+    }
+    let html = '<table class="cart-table"><thead><tr><th>№</th><th>Позиция</th><th>Кол-во</th><th>Цена за шт</th><th>Сумма</th><th></th></tr></thead><tbody>';
+    let grandTotal = 0;
+    this.cart.forEach((item, idx) => {
+      const sum = item.totalPrice;
+      grandTotal += sum;
+      html += '<tr><td>' + (idx + 1) + '</td><td><strong>' + item.icon + ' ' + item.typeName + '</strong><br><small>' + item.details + '</small></td><td>' + item.qty + '</td><td>' + this.fmtMoney(item.perPart) + ' ₽</td><td>' + this.fmtMoney(sum) + ' ₽</td><td><button class="btn btn--danger btn-sm" onclick="app.removeFromCart(' + item.id + ')">✕</button></td></tr>';
+    });
+    html += '</tbody></table>';
+    container.innerHTML = html;
+    totalArea.innerHTML = '💰 ОБЩАЯ СУММА: ' + this.fmtMoney(grandTotal) + ' ₽';
+  },
+
+  exportCartCSV() {
+    if (this.cart.length === 0) { this.showToast('Корзина пуста', 'error'); return; }
+    let csv = '\uFEFF№;Тип;Кол-во;Цена за шт;Сумма\n';
+    this.cart.forEach((item, i) => {
+      csv += (i + 1) + ';' + item.typeName + ';' + item.qty + ';' + this.fmtMoney(item.perPart) + ';' + this.fmtMoney(item.totalPrice) + '\n';
+    });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'FireProM_cart_' + new Date().toISOString().slice(0, 10) + '.csv';
+    a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+    this.showToast('📄 CSV экспортирован');
+  },
+
+  saveHtml() {
+    const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'FireProm_PRO_' + new Date().toISOString().slice(0, 10) + '.html';
+    a.click(); setTimeout(() => URL.revokeObjectURL(url), 1500);
+    this.showToast('💾 HTML сохранён');
+  },
+
+  // ===== DXF PARSER =====
+  handleDxfFile(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (!file.name.toLowerCase().endsWith('.dxf')) {
+      this.showToast('Файл должен иметь расширение .dxf', 'error'); input.value = ''; return;
+    }
+    document.getElementById('dxfFileName').textContent = file.name;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const parsed = this.parseDxf(e.target.result);
+        this.lastDxfData = parsed;
+        this.renderDxfPreview(parsed);
+        document.getElementById('dxfResults').style.display = 'block';
+        this.showToast('📐 DXF загружен: ' + parsed.entityCount + ' примитивов');
+      } catch (err) {
+        this.showToast('Ошибка парсинга: ' + err.message, 'error');
+      }
+    };
+    reader.readAsText(file); input.value = '';
+  },
+
+  parseDxf(content) {
+    const raw = content.split(/\r?\n/).map(s => s.trim());
+    const pairs = [];
+    for (let i = 0; i < raw.length - 1; i += 2) pairs.push({ code: raw[i], value: raw[i + 1] || '' });
+
+    const entities = [];
+    let inEntities = false, current = null, polyline = null;
+
+    function flushCurrent() {
+      if (!current) return;
+      if (current.type === 'VERTEX') { if (polyline) polyline.vertices.push(current.vertex); }
+      else if (current.type !== 'POLYLINE') entities.push(current);
+      current = null;
+    }
+
+    for (let i = 0; i < pairs.length; i++) {
+      const { code, value } = pairs[i];
+      if (code === '0' && value === 'SECTION') {
+        const sec = pairs[i + 1];
+        inEntities = sec && sec.code === '2' && sec.value === 'ENTITIES';
+        i++; continue;
+      }
+      if (!inEntities) continue;
+      if (code === '0') {
+        flushCurrent();
+        if (value === 'POLYLINE') { polyline = { type: 'POLYLINE', pairs: [], vertices: [] }; current = polyline; }
+        else if (value === 'VERTEX' && polyline) { current = { type: 'VERTEX', vertex: { x: 0, y: 0, bulge: 0 }, pairs: [] }; }
+        else if (value === 'SEQEND') { if (polyline) { entities.push(polyline); polyline = null; } }
+        else if (['LINE','ARC','CIRCLE','LWPOLYLINE','SPLINE'].includes(value)) current = { type: value, pairs: [] };
+        else current = null;
+        continue;
+      }
+      if (!current) continue;
+      current.pairs.push({ code, value });
+      if (current.type === 'VERTEX') {
+        if (code === '10') current.vertex.x = parseFloat(value) || 0;
+        if (code === '20') current.vertex.y = parseFloat(value) || 0;
+        if (code === '42') current.vertex.bulge = parseFloat(value) || 0;
+      }
+    }
+    flushCurrent();
+    if (polyline) entities.push(polyline);
+
+    const getFirst = (ent, code) => { const item = ent.pairs.find(p => p.code === String(code)); return item ? item.value : undefined; };
+
+    const sampleArc = (cx, cy, r, startAngle, sweepAngle) => {
+      const pts = [];
+      const steps = Math.max(8, Math.ceil(Math.abs(sweepAngle) / (Math.PI / 12)));
+      for (let s = 0; s <= steps; s++) {
+        const a = startAngle + (sweepAngle * s) / steps;
+        pts.push({ x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) });
+      }
+      return pts;
+    };
+
+    const bulgeToPoints = (a, b, bulge) => {
+      if (!bulge) return [a, b];
+      const chord = Math.hypot(b.x - a.x, b.y - a.y);
+      if (!chord) return [a, b];
+      const theta = 4 * Math.atan(bulge);
+      const r = (chord * (1 + bulge * bulge)) / (4 * Math.abs(bulge));
+      const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+      const h = Math.sqrt(Math.max(r * r - (chord / 2) * (chord / 2), 0));
+      const nx = -(b.y - a.y) / chord, ny = (b.x - a.x) / chord;
+      const sign = bulge > 0 ? 1 : -1;
+      const cx = mid.x + sign * h * nx, cy = mid.y + sign * h * ny;
+      const start = Math.atan2(a.y - cy, a.x - cx);
+      return sampleArc(cx, cy, r, start, theta);
+    };
+
+    const pathLength = (pts) => { let len = 0; for (let i = 1; i < pts.length; i++) len += Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y); return len; };
+
+    const getPolylineVerts = (ent) => {
+      if (ent.type === 'POLYLINE') {
+        const closed = ent.pairs.some(p => p.code === '70' && (parseInt(p.value, 10) & 1) === 1);
+        return { closed, verts: ent.vertices || [] };
+      }
+      if (ent.type === 'LWPOLYLINE') {
+        const closed = ent.pairs.some(p => p.code === '70' && (parseInt(p.value, 10) & 1) === 1);
+        const verts = []; let cur = null;
+        for (const p of ent.pairs) {
+          if (p.code === '10') { if (cur) verts.push(cur); cur = { x: parseFloat(p.value) || 0, y: 0, bulge: 0 }; }
+          else if (p.code === '20' && cur) cur.y = parseFloat(p.value) || 0;
+          else if (p.code === '42' && cur) cur.bulge = parseFloat(p.value) || 0;
+        }
+        if (cur) verts.push(cur);
+        return { closed, verts };
+      }
+      return { closed: false, verts: [] };
+    };
+
+    const paths = [];
+    let totalPerimeter = 0;
+
+    for (const ent of entities) {
+      if (ent.type === 'LINE') {
+        const p1 = { x: parseFloat(getFirst(ent, 10)) || 0, y: parseFloat(getFirst(ent, 20)) || 0 };
+        const p2 = { x: parseFloat(getFirst(ent, 11)) || 0, y: parseFloat(getFirst(ent, 21)) || 0 };
+        paths.push([p1, p2]); totalPerimeter += Math.hypot(p2.x - p1.x, p2.y - p1.y);
+      } else if (ent.type === 'ARC') {
+        const cx = parseFloat(getFirst(ent, 10)) || 0, cy = parseFloat(getFirst(ent, 20)) || 0, r = parseFloat(getFirst(ent, 40)) || 0;
+        const sa = (parseFloat(getFirst(ent, 50)) || 0) * Math.PI / 180, ea = (parseFloat(getFirst(ent, 51)) || 0) * Math.PI / 180;
+        let sweep = ea - sa; if (sweep <= 0) sweep += Math.PI * 2;
+        const pts = sampleArc(cx, cy, r, sa, sweep);
+        paths.push(pts); totalPerimeter += Math.abs(sweep) * r;
+      } else if (ent.type === 'CIRCLE') {
+        const cx = parseFloat(getFirst(ent, 10)) || 0, cy = parseFloat(getFirst(ent, 20)) || 0, r = parseFloat(getFirst(ent, 40)) || 0;
+        const pts = sampleArc(cx, cy, r, 0, Math.PI * 2);
+        paths.push(pts); totalPerimeter += 2 * Math.PI * r;
+      } else if (ent.type === 'LWPOLYLINE' || ent.type === 'POLYLINE') {
+        const { closed, verts } = getPolylineVerts(ent);
+        if (verts.length < 2) continue;
+        const pts = [];
+        for (let v = 0; v < verts.length - 1; v++) {
+          const seg = bulgeToPoints(verts[v], verts[v + 1], verts[v].bulge || 0);
+          if (!pts.length) pts.push(...seg); else pts.push(...seg.slice(1));
+        }
+        if (closed) {
+          const seg = bulgeToPoints(verts[verts.length - 1], verts[0], verts[verts.length - 1].bulge || 0);
+          if (!pts.length) pts.push(...seg); else pts.push(...seg.slice(1));
+        }
+        paths.push(pts); totalPerimeter += pathLength(pts);
+      } else if (ent.type === 'SPLINE') {
+        const pts = [];
+        for (let i = 0; i < ent.pairs.length; i++) {
+          if (ent.pairs[i].code === '10') {
+            const x = parseFloat(ent.pairs[i].value) || 0;
+            const yPair = ent.pairs[i + 1];
+            const y = yPair && yPair.code === '20' ? parseFloat(yPair.value) || 0 : 0;
+            pts.push({ x, y });
+          }
+        }
+        if (pts.length >= 2) { paths.push(pts); totalPerimeter += pathLength(pts); }
+      }
+    }
+
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    for (const path of paths) {
+      for (const p of path) {
+        if (!isFinite(p.x) || !isFinite(p.y)) continue;
+        if (p.x < minX) minX = p.x; if (p.x > maxX) maxX = p.x;
+        if (p.y < minY) minY = p.y; if (p.y > maxY) maxY = p.y;
+      }
+    }
+    if (!isFinite(minX)) { minX = 0; minY = 0; maxX = 1; maxY = 1; }
+
+    return {
+      entities: entities.map(e => ({ type: e.type })),
+      paths, totalPerimeter,
+      bbox: { minX, maxX, minY, maxY, width: maxX - minX || 1, height: maxY - minY || 1, area: (maxX - minX || 1) * (maxY - minY || 1) },
+      entityCount: entities.length
+    };
+  },
+
+  renderDxfPreview(parsed) {
+    const canvas = document.getElementById('dxfCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (!parsed.paths.length) {
+      ctx.fillStyle = '#888'; ctx.font = '14px Segoe UI'; ctx.textAlign = 'center';
+      ctx.fillText('Нет примитивов для отображения', canvas.width / 2, canvas.height / 2);
+      return;
+    }
+    const padding = 40;
+    const scaleX = (canvas.width - 2 * padding) / parsed.bbox.width;
+    const scaleY = (canvas.height - 2 * padding) / parsed.bbox.height;
+    const scale = Math.min(scaleX, scaleY, 200);
+    const ox = padding + (canvas.width - 2 * padding - parsed.bbox.width * scale) / 2 - parsed.bbox.minX * scale;
+    const oy = padding + (canvas.height - 2 * padding - parsed.bbox.height * scale) / 2 + parsed.bbox.maxY * scale;
+    const tx = x => ox + x * scale, ty = y => oy - y * scale;
+
+    ctx.strokeStyle = '#eee'; ctx.lineWidth = 1;
+    for (let i = 0; i < canvas.width; i += 50) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke(); }
+    for (let i = 0; i < canvas.height; i += 50) { ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke(); }
+
+    ctx.strokeStyle = '#6c3483'; ctx.lineWidth = 2;
+    parsed.paths.forEach(path => {
+      if (!path.length) return;
+      ctx.beginPath(); ctx.moveTo(tx(path[0].x), ty(path[0].y));
+      for (let i = 1; i < path.length; i++) ctx.lineTo(tx(path[i].x), ty(path[i].y));
+      ctx.stroke();
+    });
+
+    document.getElementById('dxfStats').innerHTML =
+      '<div class="dxf-stat"><div class="val">' + parsed.bbox.width.toFixed(1) + '</div><div class="lbl">Ширина, мм</div></div>' +
+      '<div class="dxf-stat"><div class="val">' + parsed.bbox.height.toFixed(1) + '</div><div class="lbl">Высота, мм</div></div>' +
+      '<div class="dxf-stat"><div class="val">' + parsed.totalPerimeter.toFixed(1) + '</div><div class="lbl">Периметр, мм</div></div>' +
+      '<div class="dxf-stat"><div class="val">' + parsed.bbox.area.toFixed(0) + '</div><div class="lbl">Площадь, мм²</div></div>' +
+      '<div class="dxf-stat"><div class="val">' + parsed.entityCount + '</div><div class="lbl">Примитивов</div></div>' +
+      '<div class="dxf-stat"><div class="val">' + (parsed.bbox.area / 1e6).toFixed(3) + '</div><div class="lbl">Площадь, м²</div></div>';
+  },
+
+  applyDxfToTab() {
+    if (!this.lastDxfData) { this.showToast('Сначала загрузите DXF-файл', 'error'); return; }
+    const target = document.getElementById('dxfTargetTab').value;
+    const w = Math.ceil(this.lastDxfData.bbox.width);
+    const h = Math.ceil(this.lastDxfData.bbox.height);
+    const p = Math.ceil(this.lastDxfData.totalPerimeter);
+    document.getElementById(target + '-part-length').value = w;
+    document.getElementById(target + '-part-width').value = h;
+    document.getElementById(target + '-perimeter').value = p;
+    this.showMetalTab(target);
+    this.calcMetal(target);
+    this.showToast('✅ Применены: ' + w + '×' + h + ' мм, периметр ' + p + ' мм');
+  },
+
+  // ===== DOOR CALCULATOR =====
+  calcDoor() {
+    const type = document.getElementById('door-type').value;
+    const qty = parseInt(document.getElementById('door-qty').value) || 1;
+    const height = parseInt(document.getElementById('door-height').value) || 2100;
+    const width = parseInt(document.getElementById('door-width').value) || 900;
+
+    let basePrice = 35000;
+    if (type.includes('fire')) basePrice = 55000;
+    if (type.includes('double')) basePrice *= 1.6;
+
+    // Size adjustment
+    const stdArea = 2100 * 900;
+    const actualArea = height * width;
+    const sizeFactor = actualArea / stdArea;
+    basePrice *= sizeFactor;
+
+    let optionsCost = 0;
+    if (document.getElementById('opt-antipanic').checked) optionsCost += 8500;
+    if (document.getElementById('opt-electro').checked) optionsCost += 7200;
+    if (document.getElementById('opt-closer').checked) optionsCost += 3200;
+    if (document.getElementById('opt-autothreshold').checked) optionsCost += 5800;
+    if (document.getElementById('opt-canopy').checked) optionsCost += 4500;
+    if (document.getElementById('opt-vision').checked) optionsCost += 12000;
+
+    const doorTotal = (basePrice + optionsCost) * qty;
+    const vat = doorTotal * 0.22;
+    const total = doorTotal + vat;
+
+    const typeNames = {
+      'outdoor-single': 'Одностворчатая наружная',
+      'outdoor-double': 'Двустворчатая наружная',
+      'indoor-single': 'Одностворчатая внутренняя',
+      'indoor-double': 'Двустворчатая внутренняя',
+      'fire-ei60-single': 'Противопожарная EI-60 (одноств.)',
+      'fire-ei60-double': 'Противопожарная EI-60 (двуств.)',
+      'technical': 'Техническая'
+    };
+
+    document.getElementById('door-results').innerHTML =
+      '<div class="result-block">' +
+      '<div class="result-block__title">📊 Расчёт дверного блока</div>' +
+      '<div class="result-row"><span>Тип:</span><span class="result-row__value">' + typeNames[type] + '</span></div>' +
+      '<div class="result-row"><span>Размеры:</span><span class="result-row__value">' + height + '×' + width + ' мм</span></div>' +
+      '<div class="result-row"><span>Количество:</span><span class="result-row__value">' + qty + ' шт.</span></div>' +
+      '<div class="result-row"><span>Базовая цена:</span><span class="result-row__value">' + this.fmtMoney(basePrice) + ' ₽</span></div>' +
+      '<div class="result-row"><span>Опции:</span><span class="result-row__value">' + this.fmtMoney(optionsCost) + ' ₽</span></div>' +
+      '<div class="result-row"><span>Сумма без НДС:</span><span class="result-row__value">' + this.fmtMoney(doorTotal) + ' ₽</span></div>' +
+      '<div class="result-row"><span>НДС 22%:</span><span class="result-row__value">' + this.fmtMoney(vat) + ' ₽</span></div>' +
+      '<div class="result-row result-row--total"><span>💰 ИТОГО С НДС:</span><span class="result-row__value">' + this.fmtMoney(total) + ' ₽</span></div>' +
+      '</div>';
+  },
+
+  // ===== KP GENERATOR =====
+  addKpItem() {
+    const container = document.getElementById('kp-items');
+    const div = document.createElement('div');
+    div.className = 'form-row kp-item';
+    div.style.alignItems = 'end';
+    div.innerHTML =
+      '<div class="form-group" style="flex:2"><label class="form-label">Наименование</label><input type="text" class="form-input kp-item-name" placeholder="Наименование"></div>' +
+      '<div class="form-group" style="flex:1"><label class="form-label">Кол-во</label><input type="number" class="form-input kp-item-qty" value="1" min="1" placeholder="Кол-во"></div>' +
+      '<div class="form-group" style="flex:1"><label class="form-label">Цена/шт, ₽</label><input type="number" class="form-input kp-item-price" value="0" min="0" placeholder="Цена"></div>' +
+      '<button class="btn btn--danger btn-sm" onclick="this.closest(\'.kp-item\').remove()" style="margin-bottom:.25rem">✕</button>';
+    container.appendChild(div);
+  },
+
+  generateKP() {
+    const client = this.safeStr('kp-client', '');
+    if (!client) { this.showToast('Укажите название организации', 'error'); return; }
+
+    const inn = this.safeStr('kp-inn', '—');
+    const address = this.safeStr('kp-address', '—');
+    const contact = this.safeStr('kp-contact', '—');
+    const phone = this.safeStr('kp-phone', '—');
+    const email = this.safeStr('kp-email', '—');
+
+    const now = this.getNowMSK();
+    const docDate = this.formatDate(now);
+    const kpNumber = 'КП-' + now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0') + '-' + String(Math.floor(Math.random() * 900) + 100);
+
+    // Collect items
+    const items = [];
+    let totalSum = 0;
+    document.querySelectorAll('.kp-item').forEach(row => {
+      const name = row.querySelector('.kp-item-name')?.value?.trim() || '';
+      const qty = parseInt(row.querySelector('.kp-item-qty')?.value) || 0;
+      const price = parseFloat(row.querySelector('.kp-item-price')?.value?.replace(',', '.')) || 0;
+      if (name && qty > 0) {
+        const sum = qty * price;
+        totalSum += sum;
+        items.push({ name, qty, price, sum });
+      }
+    });
+
+    if (items.length === 0) { this.showToast('Добавьте хотя бы одну позицию', 'error'); return; }
+
+    const vat = totalSum * 0.22;
+    const totalWithVat = totalSum + vat;
+
+    let itemsHtml = '';
+    items.forEach((item, i) => {
+      itemsHtml += '<tr><td>' + (i + 1) + '</td><td>' + item.name + '</td><td>' + item.qty + '</td><td>' + this.fmtMoney(item.price) + ' ₽</td><td>' + this.fmtMoney(item.sum) + ' ₽</td></tr>';
+    });
+
+    const html =
+      '<div class="kp-preview__header">' +
+      '<h2>ООО «ФАЙЕРПРОМ»</h2>' +
+      '<p>ИНН 7814643719 / КПП 781401001 | Тел: +7 (921) 863-56-50 | san@fire-prom.ru</p>' +
+      '<p>194292, СПб, 5-й Верхний пер., 19 лит. Д | fire-prom.ru</p>' +
+      '</div>' +
+      '<div style="text-align:center;margin-bottom:1.5rem">' +
+      '<h3 style="color:var(--primary);font-size:1.2rem;margin-bottom:.3rem">КОММЕРЧЕСКОЕ ПРЕДЛОЖЕНИЕ</h3>' +
+      '<p style="font-size:.85rem;color:#666">№ ' + kpNumber + ' | Дата: ' + docDate + '</p>' +
+      '</div>' +
+      '<div style="margin-bottom:1rem;font-size:.9rem">' +
+      '<p><strong>Заказчик:</strong> ' + client + '</p>' +
+      '<p><strong>ИНН/КПП:</strong> ' + inn + '</p>' +
+      '<p><strong>Адрес:</strong> ' + address + '</p>' +
+      '<p><strong>Контакт:</strong> ' + contact + ' | ' + phone + ' | ' + email + '</p>' +
+      '</div>' +
+      '<table class="kp-preview__table">' +
+      '<tr><th>№</th><th>Наименование</th><th>Кол-во</th><th>Цена/шт</th><th>Сумма</th></tr>' +
+      itemsHtml +
+      '</table>' +
+      '<table class="kp-preview__table">' +
+      '<tr><td style="font-weight:600">Итого без НДС</td><td>' + this.fmtMoney(totalSum) + ' ₽</td></tr>' +
+      '<tr><td>НДС 22%</td><td>' + this.fmtMoney(vat) + ' ₽</td></tr>' +
+      '<tr class="kp-preview__total"><td>ИТОГО С НДС</td><td>' + this.fmtMoney(totalWithVat) + ' ₽</td></tr>' +
+      '</table>' +
+      '<div style="margin-top:1.5rem">' +
+      '<h4 style="color:var(--primary);font-size:.95rem;margin-bottom:.5rem">Условия поставки</h4>' +
+      '<ul style="margin-left:1.2rem;font-size:.85rem;color:#666">' +
+      '<li><strong>Срок изготовления:</strong> 15–20 рабочих дней</li>' +
+      '<li><strong>Гарантия:</strong> 24 месяца</li>' +
+      '<li><strong>Оплата:</strong> 70% предоплата, 30% при отгрузке</li>' +
+      '<li><strong>Доставка:</strong> по СПб и ЛО (уточняется отдельно)</li>' +
+      '</ul>' +
+      '</div>' +
+      '<div style="margin-top:1rem;padding-top:1rem;border-top:1px solid #ccc;font-size:.8rem;color:#666">' +
+      '<p><strong>ООО «ФАЙЕРПРОМ»</strong></p>' +
+      '<p>ИНН: 7814643719 | КПП: 781401001</p>' +
+      '<p>р/с: 40702810755070004215</p>' +
+      '<p>Банк: Северо-Западный банк ПАО Сбербанк</p>' +
+      '<p>к/с: 30101810500000000653 | БИК: 044030653</p>' +
+      '<p style="margin-top:.5rem">Тел: +7 (921) 863-56-50 | Email: san@fire-prom.ru</p>' +
+      '<p>Ген. директор: Первухин Д.А.</p>' +
+      '</div>' +
+      '<div style="margin-top:1rem;padding-top:.5rem;border-top:1px solid #ccc;font-size:.75rem;color:#888;text-align:center">' +
+      'Действительно в течение 30 календарных дней · ' + docDate + ' · FireProm PRO v7.0' +
+      '</div>';
+
+    document.getElementById('kp-preview-content').innerHTML = html;
+    document.getElementById('kp-result').style.display = 'block';
+    this.showToast('📄 КП сформировано');
+
+    // Save to CRM history
+    this.saveKpToHistory(client, totalWithVat);
+  },
+
+  copyKP() {
+    const content = document.getElementById('kp-preview-content').innerText;
+    navigator.clipboard.writeText(content).then(() => {
+      this.showToast('📋 КП скопировано в буфер');
+    }).catch(() => {
+      this.showToast('Ошибка копирования', 'error');
+    });
+  },
+
+  saveKpToHistory(client, amount) {
+    let history = JSON.parse(localStorage.getItem('fp_kp_history') || '[]');
+    history.push({ client, amount, date: new Date().toISOString() });
+    localStorage.setItem('fp_kp_history', JSON.stringify(history));
+    this.updateStats();
+  },
+
+  // ===== INSTALLATION CALCULATOR =====
+  calcInstall() {
+    let total = 0;
+    document.querySelectorAll('#sec-install .qty').forEach(input => {
+      const row = input.closest('tr');
+      const qty = parseFloat(input.value) || 0;
+      const priceText = row.querySelector('td:nth-child(4)').textContent.replace(/\s/g, '').replace(',', '.');
+      const price = parseFloat(priceText) || 0;
+      const sum = qty * price;
+      row.querySelector('.sum').textContent = this.fmtMoney(sum);
+      total += sum;
+    });
+    document.getElementById('install-total').textContent = this.fmtMoney(total) + ' ₽';
+  },
+
+  // ===== RFM ANALYSIS =====
+  calcRFM() {
+    const orders = this.safeNum('rfm-orders', 0);
+    const days = this.safeNum('rfm-days', 0);
+    const sum = this.safeNum('rfm-sum', 0);
+
+    const r = this.getRFMScore('Recency', days);
+    const f = this.getRFMScore('Frequency', orders);
+    const m = this.getRFMScore('Monetary', sum);
+    const total = r + f + m;
+    const seg = this.getSegment(total);
+
+    document.getElementById('rfm-r-val').textContent = r;
+    document.getElementById('rfm-f-val').textContent = f;
+    document.getElementById('rfm-m-val').textContent = m;
+    document.getElementById('rfm-total').textContent = total;
+
+    const segEl = document.getElementById('rfm-segment');
+    segEl.textContent = seg.name;
+    segEl.className = 'segment-badge segment-badge--' + seg.cls;
+    document.getElementById('rfm-action').textContent = seg.action;
+    document.getElementById('rfm-result').style.display = 'block';
+    this.showToast('📈 RFM-анализ готов');
+  },
+
+  getRFMScore(criterion, value) {
+    const rules = {
+      Recency: [{cond:'0-30',score:5},{cond:'31-90',score:4},{cond:'91-180',score:3},{cond:'181-365',score:2},{cond:'366-99999',score:1}],
+      Frequency: [{cond:'10-99999',score:5},{cond:'5-9',score:4},{cond:'3-4',score:3},{cond:'2-2',score:2},{cond:'0-1',score:1}],
+      Monetary: [{cond:'1000000-999999999',score:5},{cond:'500000-999999',score:4},{cond:'100000-499999',score:3},{cond:'50000-99999',score:2},{cond:'0-49999',score:1}]
+    };
+    for (const rule of rules[criterion]) {
+      const dash = rule.cond.indexOf('-');
+      const l = parseInt(rule.cond.substring(0, dash));
+      const r = parseInt(rule.cond.substring(dash + 1));
+      if (value >= l && value <= r) return rule.score;
+    }
+    return 1;
+  },
+
+  getSegment(total) {
+    const segments = [
+      {min:12,name:'VIP',cls:'vip',action:'Индивидуальный менеджер, расширенная гарантия, приоритетное обслуживание'},
+      {min:8,name:'Активный',cls:'active',action:'Регулярные предложения, программы лояльности, персональные скидки'},
+      {min:5,name:'Спящий',cls:'sleeping',action:'Реактивация, специальные предложения, звонок менеджера'},
+      {min:0,name:'Потерянный',cls:'lost',action:'Анализ причин, повторное привлечение, агрессивные скидки'}
+    ];
+    for (const s of segments) if (total >= s.min) return s;
+    return segments[segments.length - 1];
+  },
+
+  // ===== CRM =====
+  saveCRM() {
+    const name = document.getElementById('crm-name').value.trim();
+    const phone = document.getElementById('crm-phone').value.trim();
+    if (!name || !phone) { this.showToast('Заполните обязательные поля', 'error'); return; }
+
+    const client = {
+      id: Date.now(),
+      name: name,
+      phone: phone,
+      email: document.getElementById('crm-email').value.trim(),
+      address: document.getElementById('crm-address').value.trim(),
+      status: document.getElementById('crm-status').value,
+      amount: parseFloat(document.getElementById('crm-amount').value) || 0,
+      date: new Date().toLocaleDateString('ru-RU')
+    };
+
+    let clients = JSON.parse(localStorage.getItem('fp_crm') || '[]');
+    clients.unshift(client);
+    localStorage.setItem('fp_crm', JSON.stringify(clients));
+
+    document.getElementById('crm-name').value = '';
+    document.getElementById('crm-phone').value = '';
+    document.getElementById('crm-email').value = '';
+    document.getElementById('crm-address').value = '';
+    document.getElementById('crm-amount').value = '0';
+
+    this.loadCRM();
+    this.updateStats();
+    this.showToast('💾 Клиент сохранён');
+  },
+
+  loadCRM() {
+    const clients = JSON.parse(localStorage.getItem('fp_crm') || '[]');
+    const tbody = document.getElementById('crm-history');
+    document.getElementById('crm-count').textContent = clients.length;
+
+    if (clients.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted)">Нет записей</td></tr>';
+      return;
+    }
+
+    let html = '';
+    clients.forEach((c, i) => {
+      const statusColors = {
+        'Не назначен': '#7f8c8d',
+        'Запланирован': '#3498db',
+        'В работе': '#f39c12',
+        'Выполнен': '#27ae60',
+        'Отменён': '#e74c3c'
+      };
+      html += '<tr><td>' + c.date + '</td><td>' + c.name + '</td><td>' + c.phone + '</td>' +
+        '<td><span style="color:' + (statusColors[c.status] || '#7f8c8d') + ';font-weight:600">' + c.status + '</span></td>' +
+        '<td>' + this.fmtMoney(c.amount) + ' ₽</td>' +
+        '<td><button class="btn btn--danger btn-sm" onclick="app.deleteCRM(' + i + ')">🗑️</button></td></tr>';
+    });
+    tbody.innerHTML = html;
+  },
+
+  deleteCRM(index) {
+    let clients = JSON.parse(localStorage.getItem('fp_crm') || '[]');
+    clients.splice(index, 1);
+    localStorage.setItem('fp_crm', JSON.stringify(clients));
+    this.loadCRM();
+    this.updateStats();
+    this.showToast('🗑️ Запись удалена');
+  },
+
+  exportCRM() {
+    const clients = JSON.parse(localStorage.getItem('fp_crm') || '[]');
+    let csv = '\uFEFFДата;Клиент;Телефон;Email;Адрес;Статус;Сумма КП\n';
+    clients.forEach(c => {
+      csv += c.date + ';"' + c.name + '";' + c.phone + ';' + (c.email || '') + ';"' + (c.address || '') + '";' + c.status + ';' + c.amount + '\n';
+    });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'crm_export_' + new Date().toISOString().slice(0, 10) + '.csv';
+    a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+    this.showToast('📊 CRM экспортирован');
+  },
+
+  // ===== STATS =====
+  updateStats() {
+    const clients = JSON.parse(localStorage.getItem('fp_crm') || '[]');
+    const kpHistory = JSON.parse(localStorage.getItem('fp_kp_history') || '[]');
+    const totalRevenue = kpHistory.reduce((s, h) => s + (h.amount || 0), 0);
+
+    document.getElementById('stat-calcs').textContent = (this.cart.length + kpHistory.length);
+    document.getElementById('stat-kp').textContent = this.fmtMoney(totalRevenue) + ' ₽';
+    document.getElementById('stat-clients').textContent = clients.length;
+    document.getElementById('stat-cart').textContent = this.cart.length;
+  },
+
+  // ===== EXPORT ALL =====
+  exportAll() {
+    const data = {
+      cart: this.cart,
+      crm: JSON.parse(localStorage.getItem('fp_crm') || '[]'),
+      kpHistory: JSON.parse(localStorage.getItem('fp_kp_history') || '[]'),
+      prices: {
+        oc: document.getElementById('price-oc').value,
+        hk: document.getElementById('price-hk').value,
+        gk: document.getElementById('price-gk').value,
+        vat: document.getElementById('vat-rate').value
+      },
+      exportDate: new Date().toISOString(),
+      version: '7.0'
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'fireprom_backup_' + new Date().toISOString().slice(0, 10) + '.json';
+    a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+    this.showToast('💾 Данные экспортированы');
+  }
+};
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => app.init());
+</script>
+</body>
+</html>
